@@ -27,13 +27,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal( HttpServletRequest request,
                                      HttpServletResponse response,
                                      FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(request);
+
         String authHeader=request.getHeader("Authorization");
 
-//        System.out.println(authHeader + "from JWTauthfilter");
+
 
         //But when we login or signup we will not be having jwt with us after login we will bur before how will we so we just forward to spring security just to allow login and signup without jwt
         if(authHeader==null || !authHeader.startsWith("Bearer ")){
+//            System.out.println("Unauthorized bro...");
             filterChain.doFilter(request,response);
             return;
         }
@@ -47,12 +48,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userId,null, Collections.emptyList());
 
+
+        //added info about user to spring security context
+        //And we can extract the userInfo such as userId from this security context while processing any user request
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            System.out.println("Authorized");
         }catch (JwtException e){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
+        //this line means I have completed authentication from my side now you can go on with your request
         filterChain.doFilter(request,response);
     }
 }

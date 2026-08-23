@@ -23,7 +23,7 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
             http
-                    .formLogin(form->form.disable())
+                    .formLogin(form->form.disable())   //diabled formlogin
                     .httpBasic(basic->basic.disable())
                     .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .csrf(customizer -> customizer.disable())   //disable csrf filtration

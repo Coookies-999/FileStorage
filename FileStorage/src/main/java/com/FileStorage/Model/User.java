@@ -26,7 +26,7 @@ public class User {
 
     private LocalDate createdAt;
 
-    @DynamoDbPartitionKey
+    @DynamoDbPartitionKey  //It's like Primary key in dynamodb
     @DynamoDbAttribute("userid")
     public String getUserId(){
         return this.userId;
@@ -38,7 +38,7 @@ public class User {
     }
 
     @DynamoDbAttribute("email")
-    @DynamoDbSecondaryPartitionKey(indexNames = "email-index")
+    @DynamoDbSecondaryPartitionKey(indexNames = "email-index")   //created Global Secondary Index GSI to query thorough email
     public String getEmail() {
         return email;
     }

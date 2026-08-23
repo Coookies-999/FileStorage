@@ -76,7 +76,7 @@ public class UserService {
             throw new IllegalArgumentException("Password Mismatch");
         }
         String token = jwtService.generateToken(users.get().getUserId());
-        return ResponseEntity.ok().header("JWT",token).body(user);
+        return ResponseEntity.ok().header("Jwt-Token",token).body(user);
     }
 
 }
