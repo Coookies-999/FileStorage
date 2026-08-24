@@ -10,6 +10,7 @@ import com.FileStorage.config.PasswordConfig;
 import jakarta.validation.Valid;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,7 +62,7 @@ public class UserService {
         return userRepository.getUsers();
     }
 
-    public ResponseEntity<userLoginDto> signin( userLoginDto user) {
+    public ResponseEntity<?> signin( userLoginDto user) {
         Optional<User> users=userRepository.findByEmail(user.getEmail());
 
         //If user doesn't exist
@@ -73,7 +74,7 @@ public class UserService {
         String hashedPassword=users.get().getHashedPass();
         //If password mismatches
         if(!BCrypt.checkpw(pass,hashedPassword)){
-            throw new IllegalArgumentException("Password Mismatch");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password mismatch");
         }
         String token = jwtService.generateToken(users.get().getUserId());
         return ResponseEntity.ok().header("Jwt-Token",token).body(user);

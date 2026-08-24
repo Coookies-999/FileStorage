@@ -18,7 +18,7 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<fileInfoResponseDto> insertTos3(@RequestBody MultipartFile file) throws IOException {
+    public ResponseEntity<?> insertTos3(@RequestBody MultipartFile file) throws IOException {
         return fileService.insertTos3(file);
     }
 
@@ -28,6 +28,10 @@ public class FileController {
         return ResponseEntity.ok(fileService.downloadFile(fileName));
     }
 
+    @GetMapping("/getFiles")
+    public ResponseEntity<?> getAllFilesUploadedByUser(){
+        return fileService.getAllFilesUploadedByLoggedInUser();
+    }
 
 
 

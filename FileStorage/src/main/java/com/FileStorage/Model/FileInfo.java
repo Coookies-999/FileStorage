@@ -5,6 +5,7 @@ import lombok.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSecondaryPartitionKey;
 
 import java.time.LocalDateTime;
 
@@ -38,6 +39,7 @@ import java.time.LocalDateTime;
         }
 
         @DynamoDbAttribute(value = "userid")
+        @DynamoDbSecondaryPartitionKey(indexNames = "userid-index")   //to get files uploaded by user
         public String getUserId() {
             return userId;
         }
