@@ -29,9 +29,10 @@ public class SecurityConfig {
                     .csrf(customizer -> customizer.disable())   //disable csrf filtration
                     .authorizeHttpRequests(auth->auth.requestMatchers("/auth/signup","/auth/login")
                             .permitAll()
-                            .anyRequest().authenticated()
+                            .anyRequest().authenticated() //only auth/login and auth/signup is granted without any security filter
                     )
                     .addFilterBefore(
+                            //All request will go for jwtAuthentication using username and password
                             jwtAuthenticationFilter,
                             UsernamePasswordAuthenticationFilter.class
                     );

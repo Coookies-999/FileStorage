@@ -53,6 +53,7 @@ public class FileService {
         //random generated s3Key for uniqueness
         String s3Key=UUID.randomUUID().toString()+"_"+multipartFile.getOriginalFilename();
 
+        //add file in s3 bucket
         s3Client.putObject(new PutObjectRequest(bucketName,s3Key,file));
 
         fileInfoResponseDto dto=fileInfoResponseDto.builder()
@@ -75,6 +76,8 @@ public class FileService {
 
         //save in dynamodb
         fileRepo.saveFile(info);
+
+        file.delete();
 
         return ResponseEntity.ok(dto);
     }
@@ -127,12 +130,15 @@ public class FileService {
 
 
     public ResponseEntity<String> deleteFile(String fileId){
+        //get fileid from request and serach in dynamodb and get the s3key and pass that to delete
         Optional<FileInfo> info=fileRepo.getFileByFileId(fileId);
 
         if(info.isEmpty())
             throw new IllegalArgumentException("Invalid file");
 
         FileInfo file=info.get();
+
+        //delete file
         s3Client.deleteObject(bucketName,file.getS3Key());
         return ResponseEntity.ok("File deleted");
     }

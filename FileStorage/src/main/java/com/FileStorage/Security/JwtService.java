@@ -18,30 +18,25 @@ public class JwtService {
     private final SecretKey secretKey;
 
     public JwtService(@Value("${jwt.secret}") String secret){
-
-        //this code basicaaly generates key and use that
-//        try{
-//            SecretKey key= KeyGenerator.getInstance("HmacSHA256").generateKey();
-//            secretKey= Base64.getEncoder().encodeToString(key.getEncoded());
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        }
         this.secretKey = Keys.hmacShaKeyFor(
                 Decoders.BASE64.decode(secret)
         );
 
     }
+
+    //generate jwt token
     public String generateToken(String userId){
             return Jwts.builder()
                     .subject(userId)
                     .issuedAt(new Date())
                     .expiration(
-                            new Date(System.currentTimeMillis()+ 1000*60*60)
+                            new Date(System.currentTimeMillis()+ 1000*60*60)   //expiry time
                     )
                     .signWith(secretKey)
                     .compact();
     }
 
+    //Extract the payload(userid) from jwt
     public String extractUserId(String token){
         return Jwts.parser()
                 .verifyWith(secretKey)

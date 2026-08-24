@@ -1,21 +1,15 @@
 package com.FileStorage.Service;
-
 import com.FileStorage.Dto.userLoginDto;
-import com.FileStorage.Dto.userResponseDto;
 import com.FileStorage.Dto.userSignupDto;
 import com.FileStorage.Model.User;
 import com.FileStorage.Repository.userRepository;
 import com.FileStorage.Security.JwtService;
-import com.FileStorage.config.PasswordConfig;
-import jakarta.validation.Valid;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +45,7 @@ public class UserService {
                 .createdAt(LocalDate.now())
                 .build();
         userRepository.saveUser(user);
+        //generate jwt token
         String token = jwtService.generateToken(user.getUserId());
 
         return ResponseEntity.ok()
@@ -72,10 +67,13 @@ public class UserService {
         String pass=user.getPassword();
 
         String hashedPassword=users.get().getHashedPass();
+
         //If password mismatches
         if(!BCrypt.checkpw(pass,hashedPassword)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password mismatch");
         }
+
+        //if everything goes well generate tokenn and access granted
         String token = jwtService.generateToken(users.get().getUserId());
         return ResponseEntity.ok().header("Jwt-Token",token).body(user);
     }
