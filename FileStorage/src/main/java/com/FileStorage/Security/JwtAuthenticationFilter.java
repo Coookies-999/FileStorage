@@ -27,9 +27,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal( HttpServletRequest request,
                                      HttpServletResponse response,
                                      FilterChain filterChain) throws ServletException, IOException {
+        System.out.println(request.getMethod()+" Header "+ request.getRequestURI());
+
 
         String authHeader=request.getHeader("Authorization");
 
+        // Allow CORS preflight request to pass through
+        if (request.getMethod().equals("OPTIONS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
 
         //But when we login or signup we will not be having jwt with us after login we will bur before how will we so we just forward to spring security just to allow login and signup without jwt

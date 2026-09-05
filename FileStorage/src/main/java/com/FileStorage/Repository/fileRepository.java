@@ -48,4 +48,14 @@ public class fileRepository {
                 .toList();
     }
 
+
+    public void deleteFile(String fileId){
+        Key key=Key.builder()
+                .partitionValue(fileId)
+                .build();
+        fileInfoDynamoDbTable.deleteItem(
+                r ->r.key(key)
+        );
+    }
+
 }

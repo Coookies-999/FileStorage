@@ -21,12 +21,14 @@ public class userController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> createNewUser(@RequestBody @Valid userSignupDto user){
-            return userService.createUser(user);
+    public ResponseEntity<?> createNewUser(@RequestBody @Valid userSignupDto user){
+        System.out.println("Sign in hit");
+        return userService.createUser(user);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid userLoginDto user){
+        System.out.println("Url hit");
         return userService.signin(user);
     }
 

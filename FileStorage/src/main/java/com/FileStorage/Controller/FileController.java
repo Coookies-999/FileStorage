@@ -23,14 +23,19 @@ public class FileController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<?> downloadFile(@RequestParam String fileName){
-        System.out.println("Filename "+ fileName);
-        return ResponseEntity.ok(fileService.downloadFile(fileName));
+    public ResponseEntity<?> downloadFile(@RequestParam String fileId){
+        System.out.println("Filename "+ fileId);
+        return ResponseEntity.ok(fileService.downloadFile(fileId));
     }
 
     @GetMapping("/getFiles")
     public ResponseEntity<?> getAllFilesUploadedByUser(){
         return fileService.getAllFilesUploadedByLoggedInUser();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteFile(@RequestParam String fileId){
+        return fileService.deleteFile(fileId);
     }
 
 

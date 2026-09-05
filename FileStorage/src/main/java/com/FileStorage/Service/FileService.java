@@ -91,6 +91,13 @@ public class FileService {
 
         FileInfo file=info.get();
 
+
+        //check if user wants to download file that is not uploaded by user
+        String UploadedByUser =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!file.getUserId().equals(UploadedByUser)){
+            throw new IllegalArgumentException("Invalid requester for file download");
+        }
+
         S3Object object=s3Client.getObject(bucketName,file.getS3Key());
         S3ObjectInputStream objectInputStream=object.getObjectContent();
 
@@ -109,9 +116,12 @@ public class FileService {
 
         //All files uploaded by user
         List<FileInfo> ls=fileRepo.getAllFilesUploadedByUser(loggedInUser);
+        System.out.println("Hit");
 
-        if(ls.isEmpty())
-            return ResponseEntity.ok("User have not uploaded any files");
+        if(ls.isEmpty()){
+            System.out.println("Not uploaded");
+            return ResponseEntity.ok(new ArrayList<fileInfoResponseDto>());
+        }
 
         List<fileInfoResponseDto> list=new ArrayList<>();
 
@@ -121,6 +131,8 @@ public class FileService {
                     .uploadedBy(file.getUserId())
                     .fileName(file.getFileName())
                     .s3Key(file.getS3Key())
+                    .fileId(file.getFileId())
+                    .uploadedDate(file.getUploadTime())
                     .build();
             list.add(dto);
         }
@@ -138,15 +150,26 @@ public class FileService {
 
         FileInfo file=info.get();
 
+
+        //check if user wants to download file that is not uploaded by user
+        String UploadedByUser =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!file.getUserId().equals(UploadedByUser)){
+            throw new IllegalArgumentException("Invalid requester for file deletion");
+        }
+
         //delete file
         s3Client.deleteObject(bucketName,file.getS3Key());
+
+        //deleteFrom DynamoDB
+        fileRepo.deleteFile(fileId);
+
         return ResponseEntity.ok("File deleted");
     }
 
 
 
     private File convertMultiPartFileToFile(MultipartFile file){
-        File convertedFile=new File(file.getOriginalFilename());
+        File convertedFile=new File(file.getName());
         try(FileOutputStream fos=new FileOutputStream(convertedFile)){
             fos.write(file.getBytes());
             return convertedFile;

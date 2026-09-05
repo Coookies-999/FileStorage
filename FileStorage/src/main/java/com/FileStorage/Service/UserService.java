@@ -27,7 +27,7 @@ public class UserService {
     @Autowired
     private JwtService jwtService;
 
-    public ResponseEntity<User> createUser(userSignupDto userSignupDto){
+    public ResponseEntity<?> createUser(userSignupDto userSignupDto){
 
         //Check if user exists with provided email
         Optional<User> users=userRepository.findByEmail(userSignupDto.getEmail());
@@ -50,7 +50,7 @@ public class UserService {
 
         return ResponseEntity.ok()
                 .header("Jwt-Token",token)
-                .body(user);
+                .body("User created");
     }
 
     public List<User> getAllUsers(){
